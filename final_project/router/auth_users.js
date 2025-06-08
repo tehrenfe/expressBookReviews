@@ -38,6 +38,9 @@ regd_users.post("/login", (req,res) => {
   if(authenticatedUser(username, password)){
     let accessToken = jwt.sign({"username": username}, 'access', {expiresIn: 60*60});
     req.session.autorization={accessToken, username};
+    req.session.username=username;
+    req.session.accessToken=accessToken;
+    console.log("LOGIN TOKEN "+req.session.autorization.username);
     return res.status(200).send("Successfully logged in user: "+username);
   } else {
     return res.status(400).json({message: "Error: Invalid user credentials"});
@@ -47,7 +50,52 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = req.params.isbn;
+  const username = req.session.username;
+  const newReview = req.body.review;
+  const review = {"user": username, "review": newReview};
+  
+  if(!books[isbn] || !newReview){
+    return res.status(400).json({message: "Error: Invalid request"});
+  } else {
+    const reviews = books[isbn].reviews;
+    
+    for(const reviewID in reviews){
+        if(reviews[reviewID].user===username){
+            newReviewID=reviewID;
+        }
+    }
+
+    if(!newReviewID){
+        const newReviewID = Object.keys(reviews).length > 0 ? Math.max(...Object.keys(reviews).map(Number)) + 1 : 1;
+    }
+
+    reviews[newReviewID] = review;
+    return res.status(200).send("Successfully added review");
+  }
+
+  
+  //return res.status(300).json({message: "Yet to be implemented"});
+});
+
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn;
+    const username = req.session.username;
+
+    if(!books[isbn]){
+        return res.status(400).json({message: "Error: Invalid request"});
+    } else {
+        const reviews = books[isbn].reviews;
+
+        for(const reviewID in reviews){
+            if(reviews[reviewID].user===username){
+                delete reviews[reviewID];
+                return res.status(200).send("Successfully deleted review");
+            }
+        }
+    }
+    return res.status(200).send("No reviews found for user")
 });
 
 module.exports.authenticated = regd_users;
