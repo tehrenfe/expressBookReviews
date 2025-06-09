@@ -25,6 +25,7 @@ const authenticatedUser = (username,password)=>{ //returns boolean
   }
 }
 
+// TASK 7
 //only registered users can login
 regd_users.post("/login", (req,res) => {
   //Write your code here
@@ -47,6 +48,7 @@ regd_users.post("/login", (req,res) => {
   }
 });
 
+// TASK 8
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
@@ -78,7 +80,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
-
+// TASK 9
 regd_users.delete("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const username = req.session.username;

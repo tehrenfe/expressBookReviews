@@ -4,8 +4,9 @@ const { authenticatedUser } = require('./auth_users.js');
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require('axios');
 
-
+// TASK 6
 public_users.post("/register", (req,res) => {
   //Write your code here
   const username = req.body.username;
@@ -22,9 +23,9 @@ public_users.post("/register", (req,res) => {
   } else {
     return res.status(400).json({message: "Error: Provide another username"});
   }
-
 });
 
+// TASK 1
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   //Write your code here
@@ -32,6 +33,13 @@ public_users.get('/',function (req, res) {
   return res.send(JSON.stringify(books,null,4));
 });
 
+// TASK 10
+public_users.get('/books', async function (req, res) {
+    const response = await axios.get('http://localhost:5000/');
+    return res.send(response.data);
+});
+
+// TASK 2
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
@@ -45,7 +53,14 @@ public_users.get('/isbn/:isbn',function (req, res) {
     return res.send(JSON.stringify({message: "No results with ISBN: "+isbn}));
   }
  });
+
+ // TASK 11
+public_users.get('/bookByIsnb/:isbn', async function (req, res) {
+    const response = await axios.get('http://localhost:5000/isbn/'+req.params.isbn);
+    return res.send(response.data);
+});
   
+ // TASK 3
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
@@ -60,6 +75,13 @@ public_users.get('/author/:author',function (req, res) {
   }
 });
 
+ // TASK 12
+public_users.get('/booksByAuthor/:author', async function (req, res) {
+    const response = await axios.get('http://localhost:5000/author/'+req.params.author);
+    return res.send(response.data);
+});
+
+// TASK 4
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
@@ -74,6 +96,13 @@ public_users.get('/title/:title',function (req, res) {
   }
 });
 
+ // TASK 13
+public_users.get('/booksByTitle/:title', async function (req, res) {
+    const response = await axios.get('http://localhost:5000/title/'+req.params.title);
+    return res.send(response.data);
+});
+
+// TASK 5
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
